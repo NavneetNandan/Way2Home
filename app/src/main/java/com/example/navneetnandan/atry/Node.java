@@ -9,11 +9,23 @@ public class Node {
     private int  energy;
     boolean isCurrent;
     boolean traversed;
+
+    public boolean isPath() {
+        return path;
+    }
+
+    public void setPath(boolean path) {
+        this.path = path;
+    }
+
+    boolean path;
+
     Node(int position){
         this.position=position;
         this.energy=-1;
         traversed=false;
         isCurrent=false;
+        path=false;
     }
     int getX(){
         return position%8;

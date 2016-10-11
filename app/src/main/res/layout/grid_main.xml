@@ -4,9 +4,25 @@
 
     <GridView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/gridview"
         android:numColumns="8"
         android:verticalSpacing="5dp"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gridview"
+        android:layout_marginTop="10dp"
+        android:onClick="showSolution"
+        android:text="@string/solve"
+        android:id="@+id/solution"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gridview"
+        android:layout_toRightOf="@id/solution"
+        android:layout_marginTop="10dp"
+        android:onClick="game"
+        android:text="@string/new_game" />
 </RelativeLayout>

@@ -10,6 +10,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,15 +20,27 @@ public class MainActivity extends AppCompatActivity {
     int currentX;
     int currentY;
     int currentEnergy;
+    int indexfirst;
+    int indexsecond;
+    int indexthird;
+    Node[] initialNodes;
+    private static final int[][] NEIGHBOUR_COORDS = {
+            { -1, 0 },
+            { 1, 0 },
+            { 0, -1 },
+            { 0, 1 }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_main);
-        game();
+        initialNodes=new Node[64];
+        game(null);
+
     }
 
-    private void game() {
+    public void game(View v) {
         currentX = 0;
         currentY = 0;
         final Node[] allNodes = new Node[64];
@@ -41,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
         gridAdapter = new GridAdapter(this, allNodes, screenWidth);
         generate(allNodes);
+        initialNodes=allNodes.clone();
+        for (int i=0;i<initialNodes.length;i++){
+            initialNodes[i]=new Node(i);
+            initialNodes[i].setEnergy(allNodes[i].getEnergy()
+            );
+        }
         /*String[] data=new String[64];
         char c='a';
         for (int i=0;i<data.length;i++){
@@ -58,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     currentEnergy += temp.getEnergy();
                     if (currentEnergy<=0){
                         Toast.makeText(getApplicationContext(),"You Lost",Toast.LENGTH_LONG).show();
-                        game();
+                        game(null);
                     }else{
                         temp.setEnergy(-1);
                         temp.traversed = true;
@@ -66,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                         currentY = temp.getY();
                         if(XYtoIndex(currentX,currentY)==63){
                             Toast.makeText(getApplicationContext(),"You Won",Toast.LENGTH_LONG).show();
-                            game();
+                            game(null);
                         }
                         temp.isCurrent = true;
                         gridAdapter.notifyDataSetChanged();
@@ -77,15 +98,113 @@ public class MainActivity extends AppCompatActivity {
         gridView.setAdapter(gridAdapter);
     }
 
+    public void showSolution(View v) {
+        Node[] allNodes=initialNodes;
+        GraphNode graphNode=new GraphNode(64);
+        for (int i = 0; i <64 ; i++) {
+            for (int[] NEIGHBOUR_COORD : NEIGHBOUR_COORDS) {
+                if (i / 8 + NEIGHBOUR_COORD[1] < 8 && i / 8 + NEIGHBOUR_COORD[1] >= 0 && i % 8 + NEIGHBOUR_COORD[0] < 8 && i % 8 + NEIGHBOUR_COORD[0] >= 0) {
+                    graphNode.addEdge(i,i + NEIGHBOUR_COORD[0] + 8 * NEIGHBOUR_COORD[1]);
+
+                }
+            }
+        }
+//        Log.e("array",graphNode.BFS(0,35).toString());
+        ArrayList<Integer> path=new ArrayList<>();
+        ArrayList<Integer> pathToFirst=graphNode.BFS(0,indexfirst);
+        Log.e("first",indexfirst+"");
+        Collections.reverse(pathToFirst);
+        path.addAll(pathToFirst);
+        ArrayList<Integer> pathToSecond=graphNode.BFS(indexfirst,indexsecond);
+        Collections.reverse(pathToSecond);
+        path.addAll(pathToSecond);
+        ArrayList<Integer> pathToThird=graphNode.BFS(indexsecond,indexthird);
+        Collections.reverse(pathToThird);
+       path.addAll(pathToThird);
+        ArrayList<Integer> pathToFinal=graphNode.BFS(indexthird,63);
+        Collections.reverse(pathToFinal);
+        path.addAll(pathToFinal);
+        //alternative path 1 for(1->3->f)
+        ArrayList<Integer> pathToThirdFromFirst=graphNode.BFS(indexfirst,indexthird);
+        Collections.reverse(pathToThirdFromFirst);
+        ArrayList<Integer> path1=new ArrayList<>();
+        int dist1=distance(initialNodes[0],initialNodes[indexfirst])+distance(initialNodes[indexfirst],initialNodes[indexthird]);
+        if(dist1<=5+initialNodes[indexfirst].getEnergy()){
+            path1.addAll(pathToFirst);//if feasible
+            path1.addAll(pathToThirdFromFirst);
+            path1.addAll(pathToFinal);
+        }
+        //alternative path 2 for(1->f)
+        ArrayList<Integer> pathToFinalFromFirst=graphNode.BFS(indexfirst,63);
+        Collections.reverse(pathToFinalFromFirst);
+        ArrayList<Integer> path2=new ArrayList<>();
+        dist1=distance(initialNodes[0],initialNodes[indexfirst])+distance(initialNodes[indexfirst],initialNodes[63]);
+        if(dist1<=5+initialNodes[indexfirst].getEnergy()){
+            path2.addAll(pathToFirst);//if feasible
+            path2.addAll(pathToFinalFromFirst);
+        }
+        //alternative path 3 for(1->2->f)
+        ArrayList<Integer> pathToFinalFromSecond=graphNode.BFS(indexsecond,63);
+        Collections.reverse(pathToFinalFromSecond);
+        ArrayList<Integer> path3=new ArrayList<>();
+        dist1=distance(initialNodes[indexsecond],initialNodes[63]);
+        if(dist1<=initialNodes[indexsecond].getEnergy()){
+            path3.addAll(pathToFirst);//if feasible
+            path3.addAll(pathToSecond);
+            path3.addAll(pathToFinalFromSecond);
+        }
+//        if(dist1<5+initialNodes[indexfirst].getEnergy()){
+//            int sum=dist1;
+//            for (int i=1;i<pathToFinal.size();i++){
+//                sum+=distance(allNodes[pathToFinal.get(i-1)],allNodes[pathToFinal.get(i)]);
+//            }
+//        }
+        int sum = getSum(allNodes, path);
+        int sum1 = getSum(allNodes, path1);
+        int sum2 = getSum(allNodes, path2);
+        int sum3 = getSum(allNodes, path3);
+        int min=sum;
+        ArrayList<Integer> minPath=path;
+        if (sum1 <min){
+            min=sum1;
+            minPath=path1;
+        }
+        if (sum2 <min){
+            min=sum1;
+            minPath=path2;
+        }
+        if (sum3 <min){
+            minPath=path3;
+        }
+
+        for (int i=0;i<minPath.size();i++){
+            allNodes[minPath.get(i)].setPath(true);
+        }
+        gridAdapter.setData(allNodes);
+        gridAdapter.notifyDataSetChanged();
+    }
+
+    private int getSum(Node[] allNodes, ArrayList<Integer> path) {
+        int sum=0;
+        if (path.isEmpty())
+            return 1000;
+        for (int i=1;i<path.size();i++){
+            sum+=distance(allNodes[path.get(i-1)],allNodes[path.get(i)]);
+        }
+        return sum;
+    }
+
     void generate(Node[] nodes) {
         int[] arrayFor1st = {4, 11, 18, 25, 32, 5, 12, 19, 26, 33, 40};
         Random random = new Random();
         int randomIndex = random.nextInt(arrayFor1st.length);
         int indexOfEnergyNode1 = arrayFor1st[randomIndex];
+        indexfirst=indexOfEnergyNode1;
         gridAdapter.notifyDataSetChanged();
         int[] arrayForLast = {23, 30, 37, 44, 51, 58, 31, 38, 45, 52, 59};
         randomIndex = random.nextInt(arrayForLast.length);
         int indexOfEnergyNodeLast = arrayForLast[randomIndex];
+        indexthird=indexOfEnergyNodeLast;
         int finalIndex = 63;
         int sum = distance(nodes[indexOfEnergyNodeLast], nodes[finalIndex]);
         nodes[indexOfEnergyNodeLast].setEnergy(sum);
@@ -93,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         int[] arrayForMiddle = {6, 13, 20, 27, 34, 41, 48, 7, 14, 21, 28, 35, 42, 49, 56, 15, 22, 29, 36, 43, 50, 57};
         randomIndex = random.nextInt(arrayForMiddle.length);
         int indexOfEnergyNodeMiddle = arrayForMiddle[randomIndex];
+        indexsecond=indexOfEnergyNodeMiddle;
         nodes[indexOfEnergyNodeMiddle].setEnergy(distance(nodes[indexOfEnergyNodeMiddle], nodes[indexOfEnergyNodeLast]));
         nodes[indexOfEnergyNode1].setEnergy(distance(nodes[indexOfEnergyNodeMiddle], nodes[indexOfEnergyNode1]));
     }
@@ -111,4 +231,5 @@ public class MainActivity extends AppCompatActivity {
     int XYtoIndex(int X, int Y) {
         return Y * 8 + X;
     }
+
 }

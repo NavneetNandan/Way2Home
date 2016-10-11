@@ -3,9 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="normal">#ffeeee</color>
-    <color name="traversed">#00eeee</color>
-    <color name="energy">#ff00ee</color>
-    <color name="current">#0000FF</color>
+    <color name="normal">#ffecb3</color>
+    <color name="traversed">#00acc1</color>
+    <color name="energy">#4caf50</color>
+    <color name="current">#006064</color>
+    <color name="path">#ef5350</color>
+
 </resources>
 
