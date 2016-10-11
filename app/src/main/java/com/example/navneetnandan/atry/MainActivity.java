@@ -20,10 +20,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        currentX = 0;
-        currentY = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_main);
+        game();
+    }
+
+    private void game() {
+        currentX = 0;
+        currentY = 0;
         final Node[] allNodes = new Node[64];
         for (int i = 0; i < allNodes.length; i++) {
             allNodes[i] = new Node(i);
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             data[i]=new String();
             data[i]+=c++;
         }Log.e("data",data.toString());*/
-        GridView gridView = (GridView) findViewById(R.id.gridview);
+        final GridView gridView = (GridView) findViewById(R.id.gridview);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -54,13 +58,16 @@ public class MainActivity extends AppCompatActivity {
                     currentEnergy += temp.getEnergy();
                     if (currentEnergy<=0){
                         Toast.makeText(getApplicationContext(),"You Lost",Toast.LENGTH_LONG).show();
+                        game();
                     }else{
                         temp.setEnergy(-1);
                         temp.traversed = true;
                         currentX = temp.getX();
                         currentY = temp.getY();
-                        if(XYtoIndex(currentX,currentY)==63)
+                        if(XYtoIndex(currentX,currentY)==63){
                             Toast.makeText(getApplicationContext(),"You Won",Toast.LENGTH_LONG).show();
+                            game();
+                        }
                         temp.isCurrent = true;
                         gridAdapter.notifyDataSetChanged();
                     }
