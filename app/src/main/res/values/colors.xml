@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="normal">#ffeeee</color>
+    <color name="traversed">#00eeee</color>
+    <color name="energy">#ff00ee</color>
+    <color name="current">#0000FF</color>
+</resources>
+
