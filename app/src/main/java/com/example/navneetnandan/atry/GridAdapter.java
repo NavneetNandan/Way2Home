@@ -61,28 +61,55 @@ public class GridAdapter extends BaseAdapter {
             textView = (TextView) convertView;
         }
 
+        if (data[i].isObstacle){
+            textView.setBackgroundColor(mContext.getResources().getColor( R.color.obstacle));
+        }else
         if (data[i].isPath()){
             textView.setBackgroundColor(mContext.getResources().getColor( R.color.path));
+            if(i==0)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+            if(i==63)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
             Log.e("h",i+"");
             if(data[i].getEnergy()!=-1){
                 Log.e("km0","kimo");
                 textView.setText(data[i].getEnergy()+"");
                 textView.setBackgroundColor(mContext.getResources().getColor( R.color.energy));
+                if(i==0)
+                    textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+                if(i==63)
+                    textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
+
             }
         }else
         if(data[i].isCurrent){
             textView.setText("");
             textView.setBackgroundColor(mContext.getResources().getColor( R.color.current));
+            if(i==0)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+            if(i==63)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
         }else
         if(data[i].traversed){
             textView.setBackgroundColor(mContext.getResources().getColor( R.color.traversed));
-
+            if(i==0)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+            if(i==63)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
         }else
         if(data[i].getEnergy()==-1){
             textView.setBackgroundColor(mContext.getResources().getColor( R.color.normal));
+            if(i==0)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+            if(i==63)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
         }else{
             textView.setText(data[i].getEnergy()+"");
             textView.setBackgroundColor(mContext.getResources().getColor( R.color.energy));
+            if(i==0)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.walk));
+            if(i==63)
+                textView.setBackground(mContext.getResources().getDrawable(R.drawable.ecologic));
         }
         return textView;
     }

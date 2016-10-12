@@ -2,12 +2,14 @@ package com.example.navneetnandan.atry;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void game(View v) {
+        TextView tex=(TextView)findViewById(R.id.en);
+        tex.setVisibility(View.VISIBLE);
         currentX = 0;
         currentY = 0;
         final Node[] allNodes = new Node[64];
@@ -107,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView tex=(TextView)findViewById(R.id.en);
+                tex.setVisibility(View.INVISIBLE);
                 Node temp = allNodes[i];
                 userPath.add(i);
-                if (distance(temp, allNodes[XYtoIndex(currentX, currentY)]) == 1) {
+                if (distance(temp, allNodes[XYtoIndex(currentX, currentY)]) == 1&&!temp.isObstacle) {
                     allNodes[XYtoIndex(currentX, currentY)].isCurrent = false;
                     Log.e("Energy", currentEnergy + "");
                     currentEnergy += temp.getEnergy();
@@ -122,11 +128,12 @@ public class MainActivity extends AppCompatActivity {
                         currentX = temp.getX();
                         currentY = temp.getY();
                         if (XYtoIndex(currentX, currentY) == 63) {
+                            Log.e("if",getSum(allNodes,getMinPath(allNodes))+" "+getSum(allNodes,userPath));
                             if (getSum(allNodes,userPath)<=getSum(allNodes,getMinPath(allNodes))){
                                 Toast.makeText(getApplicationContext(), "You Won. Excellent", Toast.LENGTH_LONG).show();
                             }
                             else {
-                                Toast.makeText(getApplicationContext(), "You Won. But...", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "You Won. But Path is not good", Toast.LENGTH_LONG).show();
                             }
                             game(null);
                         }
@@ -265,6 +272,13 @@ public class MainActivity extends AppCompatActivity {
 
     int XYtoIndex(int X, int Y) {
         return Y * 8 + X;
+    }
+
+    public void credits(View v){
+        AlertDialog.Builder builder=new AlertDialog.Builder(getApplicationContext());
+        AlertDialog dialog=builder.setMessage("Developed by:\nNavneet Nandan\n Prashant Maurya\n Gautam Kumar").create();
+        dialog.show();
+
     }
 
 }

@@ -9,6 +9,7 @@ public class Node {
     private int  energy;
     boolean isCurrent;
     boolean traversed;
+    boolean isObstacle;
 
     public boolean isPath() {
         return path;
@@ -25,6 +26,7 @@ public class Node {
         this.energy=-1;
         traversed=false;
         isCurrent=false;
+        isObstacle=false;
         path=false;
     }
     int getX(){

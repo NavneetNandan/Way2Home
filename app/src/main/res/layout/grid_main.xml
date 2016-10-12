@@ -9,6 +9,7 @@
         android:numColumns="8"
         android:verticalSpacing="5dp"
         />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,13 +17,29 @@
         android:layout_marginTop="10dp"
         android:onClick="showSolution"
         android:text="@string/solve"
-        android:id="@+id/solution"/>
+        android:id="@+id/solution" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/i"
+        android:layout_below="@id/gridview"
+        android:text="Initial Energy = 5"
+        android:id="@+id/en"
+        android:textColor="@android:color/background_dark"
+        android:textSize="16sp" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gridview"
-        android:layout_toRightOf="@id/solution"
-        android:layout_marginTop="10dp"
+        android:id="@+id/i"
         android:onClick="game"
-        android:text="@string/new_game" />
+        android:text="@string/new_game"
+
+        android:layout_alignBaseline="@+id/solution"
+        android:layout_alignBottom="@+id/solution"
+        android:layout_toEndOf="@+id/solution" />
+
+
 </RelativeLayout>
